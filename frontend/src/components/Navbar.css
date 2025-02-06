@@ -1,0 +1,223 @@
+:root {
+    --primary-color: #2C3E50;
+    --secondary-color: #16a34a;
+    --hover-color: #15803d;
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --background-light: #f8fafc;
+    --border-color: #e2e8f0;
+  }
+  
+  .navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #ffffff;
+    box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+  }
+  
+  .nav-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem 2rem;
+    height: 64px;
+  }
+  
+  .nav-logo {
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .logo-icon {
+    font-size: 1.8rem;
+    color: var(--secondary-color);
+  }
+  
+  .logo-text {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    letter-spacing: -0.5px;
+  }
+  
+  .nav-middle {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    align-items: center;
+  }
+  
+  .nav-link {
+    text-decoration: none;
+    color: var(--text-primary);
+    font-weight: 500;
+    font-size: 1rem;
+    transition: color 0.2s ease;
+  }
+  
+  .nav-link:hover {
+    color: var(--secondary-color);
+  }
+  
+  .auth-buttons {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .post-job-btn {
+    text-decoration: none;
+    padding: 0.6rem 1rem;
+    background: #ecfdf5;
+    color: var(--secondary-color);
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+  }
+  
+  .post-job-btn:hover {
+    background: #dcfce7;
+  }
+  
+  .login-btn {
+    text-decoration: none;
+    color: var(--text-primary);
+    font-weight: 500;
+    font-size: 0.95rem;
+    padding: 0.6rem 1rem;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+  }
+  
+  .login-btn:hover {
+    background: var(--background-light);
+  }
+  
+  .register-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    background: var(--secondary-color);
+    color: white;
+    padding: 0.6rem 1rem;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+  }
+  
+  .register-btn:hover {
+    background: var(--hover-color);
+  }
+  
+  .mobile-menu-btn {
+    display: none;
+  }
+  
+  .mobile-menu {
+    display: none;
+  }
+  
+  @media (max-width: 1024px) {
+    .nav-links {
+      gap: 1.5rem;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .nav-middle,
+    .auth-buttons {
+      display: none;
+    }
+  
+    .mobile-menu-btn {
+      display: block;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: var(--text-primary);
+      cursor: pointer;
+    }
+  
+    .mobile-menu {
+      display: block;
+      position: fixed;
+      top: 64px;
+      left: 0;
+      right: 0;
+      background: white;
+      padding: 1rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transform: translateY(-100%);
+      opacity: 0;
+      transition: all 0.3s ease;
+    }
+  
+    .mobile-menu.active {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  
+    .mobile-link {
+      display: block;
+      padding: 1rem;
+      text-decoration: none;
+      color: var(--text-primary);
+      font-weight: 500;
+      border-radius: 6px;
+    }
+  
+    .mobile-link:hover {
+      background: var(--background-light);
+      color: var(--secondary-color);
+    }
+  
+    .mobile-auth {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border-color);
+    }
+  
+    .mobile-post-job,
+    .mobile-login,
+    .mobile-register {
+      display: block;
+      padding: 1rem;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: 500;
+    }
+  
+    .mobile-post-job {
+      background: #ecfdf5;
+      color: var(--secondary-color);
+    }
+  
+    .mobile-login {
+      background: var(--background-light);
+      color: var(--text-primary);
+    }
+  
+    .mobile-register {
+      background: var(--secondary-color);
+      color: white;
+    }
+  } 
