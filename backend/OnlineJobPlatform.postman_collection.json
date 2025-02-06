@@ -1,0 +1,908 @@
+{
+	"info": {
+		"_postman_id": "fbcec363-c421-4bba-bd2d-4de5f232dd60",
+		"name": "OnlineJobPlatform",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "40478578"
+	},
+	"item": [
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "add user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"Deep Patel\",\r\n    \"email\":\"dppatel0386@gmail.com\",\r\n    \"password\":\"Deep@0386\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/users",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "verifyotp",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"otp\":672836\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/users/verifyotp",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"users",
+								"verifyotp"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User login",
+			"item": [
+				{
+					"name": "Google login",
+					"item": [
+						{
+							"name": "New Request",
+							"request": {
+								"auth": {
+									"type": "oauth2",
+									"oauth2": [
+										{
+											"key": "scope",
+											"value": "profile email",
+											"type": "string"
+										},
+										{
+											"key": "state",
+											"value": "",
+											"type": "string"
+										},
+										{
+											"key": "addTokenTo",
+											"value": "header",
+											"type": "string"
+										},
+										{
+											"key": "client_authentication",
+											"value": "header",
+											"type": "string"
+										},
+										{
+											"key": "redirect_uri",
+											"value": "http://localhost:3000/gauth/google/callback",
+											"type": "string"
+										},
+										{
+											"key": "clientSecret",
+											"value": "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",
+											"type": "string"
+										},
+										{
+											"key": "clientId",
+											"value": "854179179717-gvcs66b51lu2ig9tf4uehn5nij0d69js.apps.googleusercontent.com",
+											"type": "string"
+										},
+										{
+											"key": "accessTokenUrl",
+											"value": "https://oauth2.googleapis.com/token",
+											"type": "string"
+										},
+										{
+											"key": "authUrl",
+											"value": "https://accounts.google.com/o/oauth2/v2/auth",
+											"type": "string"
+										},
+										{
+											"key": "tokenName",
+											"value": "token",
+											"type": "string"
+										},
+										{
+											"key": "useBrowser",
+											"value": false,
+											"type": "boolean"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/gouth",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"gouth"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "New Request",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "AQXRk14xyT1kJ93zkO5hqJUlc5ju3nzAn9oCO6NSWE2-PFq8dB26Exf2D7SdKWtUPMrNd435eQFWTLNmGXJvl5UZCnZHYQSSV9sKubnyGuCUsgHZ1AIFN_jSVxMS7mSptpVRH8COkWjkcY4YV2Pl-Zx_mqJV4NrnyrXZ-oHl-qX6hB3erj1-aqnjkqqMLe6FrlyrK53rSwi8PIp_NEzXHj1XHuzK-eXAMrf6cXp6PD6CKkDWvKdGb9idFjLpP1FTnVMSoW16oS1KvRYCFlcEuDEBv9os76ih5k0UV0Uk6lX_uv2IGpLTKGIQXAf7sC8Z8i0qV4RZ7J9SfAu6jnbcmSZvnQSiLw",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "authorization",
+										"value": "Bearer AQXJswJbQIRMCJs4BY6BXVqUl2G8VgjxBDDFZhWndqWMTGRDLj_HQoM9zxfSxSUJ_URoKmrUdP3W8cIgg5Hqv6FpkCfTWyFgKTc_egbWYA2VjJ5EWpyz28vkZu5Dply6S7Y518-3uC2TL_sr2_O-syfoj9QH0a9a9SSCk6toYuRuhq1lVbXHW19iSS8VY1cgFzBb1kQiWRZHg5kQLiGuOGGU3lYbjkC9R9ZOfPWPvXX3hMrPsYAsWZp8BZET1dRR_5q55t0oPCA7YJjjtPopszUYK6IJzawOi6FVGFC38itm-IfzRz1CmwehdJhL9BoKBrGrrnc-RM8Bwa14EkSdAFH552vexQ\n\n\n",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "https://api.linkedin.com/v2/userinfo",
+									"protocol": "https",
+									"host": [
+										"api",
+										"linkedin",
+										"com"
+									],
+									"path": [
+										"v2",
+										"userinfo"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"dppatel0386@gmail.com\",\r\n    \"password\":\"Deep@0386\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "logout",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/auth/logout",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"auth",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Company",
+			"item": [
+				{
+					"name": "New Request",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "companyName",
+									"value": "tuvoc technologies",
+									"type": "text"
+								},
+								{
+									"key": "companyDescription",
+									"value": "Leading software development company specializing in innovative solutions",
+									"type": "text"
+								},
+								{
+									"key": "industry",
+									"value": "Information Technology",
+									"type": "text"
+								},
+								{
+									"key": "companySize",
+									"value": "11-50",
+									"type": "text"
+								},
+								{
+									"key": "companyWebsite",
+									"value": "https://tuvoctechnologies.com",
+									"type": "text"
+								},
+								{
+									"key": "contactEmail",
+									"value": "contact@tuvoctechnolgies.com",
+									"type": "text"
+								},
+								{
+									"key": "contactPhone",
+									"value": "+1234567890",
+									"type": "text"
+								},
+								{
+									"key": "address",
+									"value": "123 Tech Street",
+									"type": "text"
+								},
+								{
+									"key": "city",
+									"value": "ahemdabad",
+									"type": "text"
+								},
+								{
+									"key": "country",
+									"value": "india",
+									"type": "text"
+								},
+								{
+									"key": "state",
+									"value": "gujarat",
+									"type": "text"
+								},
+								{
+									"key": "postalCode",
+									"value": "456789",
+									"type": "text"
+								},
+								{
+									"key": "socialLinks",
+									"value": "{  \"linkedin\":\"https://linkedin.com/company/techsolutions\",\"twitter\": \"https://twitter.com/techsolutions\",\"facebook\": \"https://facebook.com/techsolutions\"}",
+									"type": "text"
+								},
+								{
+									"key": "logo",
+									"type": "file",
+									"src": "postman-cloud:///1efe2c01-fbdd-4ef0-a913-b1c46e0018d1"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/employer/company",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"employer",
+								"company"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var template = `\r",
+									"<style type=\"text/css\">\r",
+									"    .tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}\r",
+									"    .tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}\r",
+									"    .tftable tr {background-color:#ffffff;}\r",
+									"    .tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}\r",
+									"    .tftable tr:hover {background-color:#e0ffff;}\r",
+									"</style>\r",
+									"\r",
+									"<table class=\"tftable\" border=\"1\">\r",
+									"    <tr>\r",
+									"        <th>Field</th>\r",
+									"        <th>Value</th>\r",
+									"    </tr>\r",
+									"    <tr>\r",
+									"        <td>Success</td>\r",
+									"        <td>{{response.success}}</td>\r",
+									"    </tr>\r",
+									"    <tr>\r",
+									"        <td>ID</td>\r",
+									"        <td>{{response.data.id}}</td>\r",
+									"    </tr>\r",
+									"    <tr>\r",
+									"        <td>Employee ID</td>\r",
+									"        <td>{{response.data.employeeId}}</td>\r",
+									"    </tr>\r",
+									"    <tr>\r",
+									"        <td>Company Name</td>\r",
+									"        <td>{{response.data.companyName}}</td>\r",
+									"    </tr>\r",
+									"    <tr>\r",
+									"        <td>Company Description</td>\r",
+									"        <td>{{response.data.companyDescription}}</td>\r",
+									"    </tr>\r",
+									"    <tr>\r",
+									"        <td>Company Website</td>\r",
+									"        <td>{{response.data.companyWebsite}}</td>\r",
+									"    </tr>\r",
+									"    <tr>\r",
+									"        <td>Company Logo</td>\r",
+									"        <td>{{response.data.companyLogo}}</td>\r",
+									"    </tr>\r",
+									"    <tr>\r",
+									"        <td>Subscription Plan</td>\r",
+									"        <td>{{response.data.subscriptionPlan}}</td>\r",
+									"    </tr>\r",
+									"    <tr>\r",
+									"        <td>Subscription Status</td>\r",
+									"        <td>{{response.data.subscriptionStatus}}</td>\r",
+									"    </tr>\r",
+									"    <tr>\r",
+									"        <td>Industry</td>\r",
+									"        <td>{{response.data.industry}}</td>\r",
+									"    </tr>\r",
+									"    <tr>\r",
+									"        <td>Company Size</td>\r",
+									"        <td>{{response.data.companySize}}</td>\r",
+									"    </tr>\r",
+									"    <tr>\r",
+									"        <td>Contact Email</td>\r",
+									"        <td>{{response.data.contactEmail}}</td>\r",
+									"    </tr>\r",
+									"    <tr>\r",
+									"        <td>Contact Phone</td>\r",
+									"        <td>{{response.data.contactPhone}}</td>\r",
+									"    </tr>\r",
+									"    <tr>\r",
+									"        <td>Address</td>\r",
+									"        <td>{{response.data.address}}</td>\r",
+									"    </tr>\r",
+									"    <tr>\r",
+									"        <td>City</td>\r",
+									"        <td>{{response.data.city}}</td>\r",
+									"    </tr>\r",
+									"    <tr>\r",
+									"        <td>State</td>\r",
+									"        <td>{{response.data.state}}</td>\r",
+									"    </tr>\r",
+									"    <tr>\r",
+									"        <td>Country</td>\r",
+									"        <td>{{response.data.country}}</td>\r",
+									"    </tr>\r",
+									"    <tr>\r",
+									"        <td>Postal Code</td>\r",
+									"        <td>{{response.data.postalCode}}</td>\r",
+									"    </tr>\r",
+									"    <tr>\r",
+									"        <td>Is Verified</td>\r",
+									"        <td>{{response.data.isVerified}}</td>\r",
+									"    </tr>\r",
+									"    <tr>\r",
+									"        <td>Verified By</td>\r",
+									"        <td>{{response.data.verifiedBy}}</td>\r",
+									"    </tr>\r",
+									"    <tr>\r",
+									"        <td>Verified At</td>\r",
+									"        <td>{{response.data.verifiedAt}}</td>\r",
+									"    </tr>\r",
+									"    <tr>\r",
+									"        <td>Status</td>\r",
+									"        <td>{{response.data.status}}</td>\r",
+									"    </tr>\r",
+									"    <tr>\r",
+									"        <td>Company Code</td>\r",
+									"        <td>{{response.data.companyCode}}</td>\r",
+									"    </tr>\r",
+									"    <tr>\r",
+									"        <td>Created At</td>\r",
+									"        <td>{{response.data.createdAt}}</td>\r",
+									"    </tr>\r",
+									"    <tr>\r",
+									"        <td>Updated At</td>\r",
+									"        <td>{{response.data.updatedAt}}</td>\r",
+									"    </tr>\r",
+									"    <tr>\r",
+									"        <td>Employee ID</td>\r",
+									"        <td>{{response.data.employee.id}}</td>\r",
+									"    </tr>\r",
+									"    <tr>\r",
+									"        <td>User ID</td>\r",
+									"        <td>{{response.data.employee.userId}}</td>\r",
+									"    </tr>\r",
+									"    <tr>\r",
+									"        <td>Company ID</td>\r",
+									"        <td>{{response.data.employee.companyId}}</td>\r",
+									"    </tr>\r",
+									"    <tr>\r",
+									"        <td>Designation</td>\r",
+									"        <td>{{response.data.employee.designation}}</td>\r",
+									"    </tr>\r",
+									"    <tr>\r",
+									"        <td>Department</td>\r",
+									"        <td>{{response.data.employee.department}}</td>\r",
+									"    </tr>\r",
+									"    <tr>\r",
+									"        <td>Phone Number</td>\r",
+									"        <td>{{response.data.employee.phoneNumber}}</td>\r",
+									"    </tr>\r",
+									"    <tr>\r",
+									"        <td>Address</td>\r",
+									"        <td>{{response.data.employee.address}}</td>\r",
+									"    </tr>\r",
+									"    <tr>\r",
+									"        <td>Created At</td>\r",
+									"        <td>{{response.data.employee.createdAt}}</td>\r",
+									"    </tr>\r",
+									"    <tr>\r",
+									"        <td>Updated At</td>\r",
+									"        <td>{{response.data.employee.updatedAt}}</td>\r",
+									"    </tr>\r",
+									"</table>\r",
+									"`;\r",
+									"\r",
+									"function constructVisualizerPayload() {\r",
+									"    return {response: pm.response.json()}\r",
+									"}\r",
+									"\r",
+									"pm.visualizer.set(template, constructVisualizerPayload());"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/employer/company",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"employer",
+								"company"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n   \"companySize\": \"51-200\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/employer/company",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"employer",
+								"company"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "show the company logo",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://jobplatform.s3.ap-south-1.amazonaws.com/company-logos/3-1738650054121-WhatsApp+Image+2025-01-29+at+17.58.26_55846d5c.jpg",
+							"protocol": "https",
+							"host": [
+								"jobplatform",
+								"s3",
+								"ap-south-1",
+								"amazonaws",
+								"com"
+							],
+							"path": [
+								"company-logos",
+								"3-1738650054121-WhatsApp+Image+2025-01-29+at+17.58.26_55846d5c.jpg"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Job",
+			"item": [
+				{
+					"name": "New Request",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"title\": \"Full Stack Developer\",\r\n  \"description\": \"We are seeking a talented Full Stack Developer to join our team...\",\r\n  \"requirements\": \"- 3+ years experience with full stack development\\n- Strong JavaScript skills\\n- Experience with Node.js and React\",\r\n  \"location\": \"San Francisco, CA\",\r\n  \"jobType\": \"full-time\",\r\n  \"experienceLevel\": \"mid-level\",\r\n  \"salary\": {\r\n    \"min\": 100000,\r\n    \"max\": 150000,\r\n    \"currency\": \"USD\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/employer/jobs",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"employer",
+								"jobs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/employer/jobs",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"employer",
+								"jobs"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "companypending",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var template = `\r",
+									"<style type=\"text/css\">\r",
+									"    .tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}\r",
+									"    .tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}\r",
+									"    .tftable tr {background-color:#ffffff;}\r",
+									"    .tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}\r",
+									"    .tftable tr:hover {background-color:#e0ffff;}\r",
+									"</style>\r",
+									"\r",
+									"<table class=\"tftable\" border=\"1\">\r",
+									"    <tr>\r",
+									"        <th>ID</th>\r",
+									"        <th>Employee ID</th>\r",
+									"        <th>Company Name</th>\r",
+									"        <th>Company Description</th>\r",
+									"        <th>Company Website</th>\r",
+									"        <th>Company Logo</th>\r",
+									"        <th>Subscription Plan</th>\r",
+									"        <th>Subscription Status</th>\r",
+									"        <th>Industry</th>\r",
+									"        <th>Company Size</th>\r",
+									"        <th>Contact Email</th>\r",
+									"        <th>Contact Phone</th>\r",
+									"        <th>Address</th>\r",
+									"        <th>City</th>\r",
+									"        <th>State</th>\r",
+									"        <th>Country</th>\r",
+									"        <th>Postal Code</th>\r",
+									"        <th>Verified</th>\r",
+									"        <th>Status</th>\r",
+									"        <th>Company Code</th>\r",
+									"        <th>Created At</th>\r",
+									"        <th>Updated At</th>\r",
+									"        <th>Employee ID</th>\r",
+									"        <th>User ID</th>\r",
+									"        <th>Company ID</th>\r",
+									"        <th>Created At</th>\r",
+									"        <th>Updated At</th>\r",
+									"    </tr>\r",
+									"    \r",
+									"    {{#each response.data}}\r",
+									"        <tr>\r",
+									"            <td>{{id}}</td>\r",
+									"            <td>{{employeeId}}</td>\r",
+									"            <td>{{companyName}}</td>\r",
+									"            <td>{{companyDescription}}</td>\r",
+									"            <td>{{companyWebsite}}</td>\r",
+									"            <td>{{companyLogo}}</td>\r",
+									"            <td>{{subscriptionPlan}}</td>\r",
+									"            <td>{{subscriptionStatus}}</td>\r",
+									"            <td>{{industry}}</td>\r",
+									"            <td>{{companySize}}</td>\r",
+									"            <td>{{contactEmail}}</td>\r",
+									"            <td>{{contactPhone}}</td>\r",
+									"            <td>{{address}}</td>\r",
+									"            <td>{{city}}</td>\r",
+									"            <td>{{state}}</td>\r",
+									"            <td>{{country}}</td>\r",
+									"            <td>{{postalCode}}</td>\r",
+									"            <td>{{isVerified}}</td>\r",
+									"            <td>{{status}}</td>\r",
+									"            <td>{{companyCode}}</td>\r",
+									"            <td>{{createdAt}}</td>\r",
+									"            <td>{{updatedAt}}</td>\r",
+									"            <td>{{employee.id}}</td>\r",
+									"            <td>{{employee.userId}}</td>\r",
+									"            <td>{{employee.companyId}}</td>\r",
+									"            <td>{{employee.createdAt}}</td>\r",
+									"            <td>{{employee.updatedAt}}</td>\r",
+									"        </tr>\r",
+									"    {{/each}}\r",
+									"</table>\r",
+									"`;\r",
+									"\r",
+									"function constructVisualizerPayload() {\r",
+									"    return {response: pm.response.json()}\r",
+									"}\r",
+									"\r",
+									"pm.visualizer.set(template, constructVisualizerPayload());"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "http://localhost:3000/employer/companies/pending",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"employer",
+								"companies",
+								"pending"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/employer/company/verify/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"employer",
+								"company",
+								"verify",
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Jobseeker",
+			"item": [
+				{
+					"name": "get profile",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/jobseeker/profile",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"jobseeker",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update profile",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "  { \"skills\": \"JavaScript, Node.js, React\",\r\n  \"education\": \"Bachelor's in Computer Science from XYZ University\",\r\n\"experience\": \"2 years as Software Developer at ABC Company\",\r\n \"certifications\": \"AWS Certified Developer, Google Cloud Asso\"\r\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/jobseeker/profile",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"jobseeker",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "fill the form",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/jobseeker/jobs/1/apply",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"jobseeker",
+								"jobs",
+								"1",
+								"apply"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get application",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/jobseeker/applications",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"jobseeker",
+								"applications"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
