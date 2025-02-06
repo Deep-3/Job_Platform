@@ -4,14 +4,14 @@ const nodemailer = require('nodemailer');
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: 'deepkalathiya03@gmail.com',
-      pass: 'rbxf ewaf kkoi nqmk'
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS
     }
   });
 
 const sendOtp = (email, otp) => {
   const mailOptions = {
-    from: 'deepkalathiya03@gmail.com',
+    from:process.env.EMAIL_USER,
     to: email,
     subject: 'Your OTP for Account Verification',
     text: `Your OTP is: ${otp}`,
