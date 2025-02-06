@@ -79,72 +79,53 @@ passport.use(new GoogleStrategy({
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
   callbackURL: process.env.GOOGLE_CALLBACK_URL,
 }, async(accesstoken, refreshtoken, profile, done) => {
-  const transaction = await db.sequelize.transaction();
   try {
-
-      console.log(profile.emails[0].value);
-
-      let user = await db.User.findOne({
-          where: { email: profile.emails[0].value }
+    let user = await db.User.findOne({
+      where: { email: profile.emails[0].value }
+    });
+    
+    // Check if user exists with different auth provider
+    if (user && user.authProvider !== 'google') {
+      return done(null, false, { 
+        message: `This email is already registered with ${user.authProvider}` 
       });
-      
-      // Check if user exists with different auth provider
-      if (user && user.authProvider != 'google') {
-          return done(null, false, { 
-              message: `This email is already registered with ${user.authProvider}` 
-          });
+    }
 
-      }
+    if (!user) {
+      // Return pending registration data
+      return done(null, {
+        pendingRegistration: true,
+        name: profile.displayName,
+        email: profile.emails[0].value,
+        authProvider: 'google'
+      });
+    }
 
-      if (!user) {
-          // Create new user
-          user = await db.User.create({
-              name: profile.displayName,
-              email: profile.emails[0].value,
-              password: null, 
-              role: 'jobseeker',
-              authProvider: 'google',
-              isVerified: true
-          },{transaction});
-
-          if (user.role === 'jobseeker') {
-            await db.JobSeekerProfile.create({
-              userId: user.id,  // Reference the user created above
-              // skills: userData.skills || null,
-              // education: userData.education || null,
-              // experience: userData.experience || null,
-              // certifications: userData.certifications || null,
-              // resumeUrl: resumeUrl,  // Will be added later for resume upload
-            }, { transaction });
-          }
-          await transaction.commit();
-
-          return done(null, user, { message: 'Welcome to system' });
-      }
-
-
-      // If existing Google user
-      return done(null, user, { message: 'Login successful' });
-
+    return done(null, user);
   } catch (err) {
-    if (transaction) await transaction.rollback();
-      console.error('Google Auth Error:', err);
-      return done(err);
+    return done(err);
   }
 }));
 
 passport.serializeUser((user, done) => {
-  done(null, user.id);  // Store just the user ID in the session
+  if (user.pendingRegistration) {
+    // For users who haven't selected role
+    done(null, { pendingRegistration: true, ...user });
+  } else {
+    // For complete users
+    done(null, user.id);
+  }
 });
 
 // Passport deserialization (used to retrieve user from session)
-passport.deserializeUser(async (id, done) => {
-  console.log('Deserializing user ID:', id);
+passport.deserializeUser(async (data, done) => {
   try {
-    const user = await db.User.findByPk(id);
-    if (!user) {
-      console.log('User not found');
+    if (data.pendingRegistration) {
+      // Return temporary data for pending registrations
+      return done(null, data);
     }
+    // Normal user lookup
+    const user = await db.User.findByPk(data);
     done(null, user);
   } catch (err) {
     done(err);

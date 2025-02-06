@@ -4,156 +4,152 @@ const { sendOtp } = require('../utils/otpmail');
 const crypto = require('crypto');
 const bcrypt = require('bcrypt');
 
-exports.createUser = async (userData,res) => {
-    const transaction = await db.sequelize.transaction();
-
+exports.createUser = async (userData, res) => {
     try {
-    const validUser=await User.findOne({where:{email:userData.email}});
-    console.log(validUser)
-    if(validUser){
-        return {error:"User already exists"};
-        }
-        if (userData.password) {
-            userData.password = await bcrypt.hash(userData.password, 10); // Ensure saltRounds (10 here) is provided
-          }
-    
-
-  const user = await User.create({
-    ...userData,
-    isVerified: false,  
-  },{transaction});
-
-  if (userData.role === 'jobseeker') {
-    await db.JobSeekerProfile.create({
-      userId: user.id,  // Reference the user created above
-      skills: userData.skills || null,
-      education: userData.education || null,
-      experience: userData.experience || null,
-      certifications: userData.certifications || null,
-      // resumeUrl: resumeUrl,  // Will be added later for resume upload
-    }, { transaction });
-  }
-
-  const otp = crypto.randomInt(100000, 999999).toString();
-  user.otp = otp;
-  user.otpExpiry = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes expiry
-  await user.save({ transaction });
-
-  await sendOtp(userData.email, otp);
-  await transaction.commit();
-
-//   console.log("user is",user);
-  return user;
-}catch (error) {
-
-    // console.log("this is error",error)
-    // If anything fails, rollback the transaction to ensure no partial data
-    await transaction.rollback();
-    // console.error("Error in createUser:", error); // Log full error for debugging
-    if (error.name === 'SequelizeValidationError') {
-     return {  error:error.errors[0].message };
+      // Check if user exists
+      const validUser = await User.findOne({ where: { email: userData.email } });
+      if (validUser) {
+        return { error: "User already exists" };
       }
-
-    return { error: error.message || "An unexpected error occurred" };
-
-  }
-};
-
-exports.verifyOtp = async (email, otpInput,req, res) => {
-  try {
-      const user = await db.User.findOne({ where: { email } });
-      
-      if (!user) {
-          return res.json({
-              success: false,
-              message: 'User not found'
-          });
-      }
-      
-      if(user.isVerified) {
-          return res.json({
-              success: false,
-              message: 'User already verified'
-          });
-      }
-
-      // Check OTP expiry
-      if (new Date() > user.otpExpiry) {
-          await db.User.update(
-              { otp: null, otpExpiry: null },
-              { where: { email } }
-          );
-
-          const newOtp = crypto.randomInt(100000, 999999).toString();
-          const otpExpiry = new Date(Date.now() + 5 * 60 * 1000);
-
-          await db.User.update(
-              { otp: newOtp, otpExpiry },
-              { where: { email } }
-          );
-
-          await sendOtp(email, newOtp);
-
-          return res.json({
-              success: false,
-              message: 'OTP has expired. A new OTP has been sent.'
-          });
-      }
-
-      if (user.otp !== otpInput) {
-          return res.json({
-              success: false,
-              message: 'Invalid OTP'
-          });
-      }
-
-      // Update user verification status
-      try {
-          await db.User.update({
-              isVerified: true,
-              otp: null,
-              otpExpiry: null
-          }, {
-              where: { email }
-          });
-
-          // Fetch updated user
-          const updatedUser = await db.User.findOne({ where: { email } });
-          delete req.session.verifyEmail;
-
-
-          req.login(updatedUser, (err) => {
-            if (err) {
-                return res.json({
-                    success: false,
-                    message: 'Error logging in user'
-                });
-            }
-            req.flash('success','login successfully')
-            
-            res.redirect('/');
-        });
-
-
-        //   return res.json({
-        //       success: true,
-        //       message: 'OTP verified successfully',
-        //       user: updatedUser
-        //   });
-
-      } catch (updateError) {
-          console.error('Error updating user:', updateError);
-          return res.json({
-              success: false,
-              message: 'Error updating user verification status'
-          });
-      }
-
-  } catch (error) {
-      console.error('OTP verification error:', error);
-      return res.json({
+  
+      // Hash password
+      const hashedPassword = await bcrypt.hash(userData.password, 10);
+  
+      // Generate OTP
+      const otp = crypto.randomInt(100000, 999999).toString();
+      const otpExpiry = new Date(Date.now() + 5 * 60 * 1000);
+  
+      // Store in session instead of DB
+      const tempUser = {
+        name: userData.name,
+        email: userData.email,
+        password: hashedPassword,
+        otp: otp,
+        otpExpiry: otpExpiry,
+        authProvider: 'local'
+      };
+  
+      // Send OTP
+      await sendOtp(userData.email, otp);
+  
+      return {
+        success: true,
+        tempUser: tempUser,
+        email: userData.email,
+        message: 'OTP sent to your email'
+      };
+  
+    } catch (error) {
+      return { error: error.message || "An unexpected error occurred" };
+    }
+  };
+  exports.verifyOtp = async (userEmail, otpInput, req, res) => {
+    try {
+      const tempUser = req.session.tempUser;
+  
+      if (!tempUser) {
+        return res.status(400).json({
           success: false,
-          message: 'Error verifying OTP'
+          message: 'Registration session expired'
+        });
+      }
+  
+      // Check if OTP is expired
+      if (new Date() > new Date(tempUser.otpExpiry)) {
+        // Generate new OTP
+        const newOtp = crypto.randomInt(100000, 999999).toString();
+        const newOtpExpiry = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes expiry
+  
+        // Update temp user with new OTP
+        tempUser.otp = newOtp;
+        tempUser.otpExpiry = newOtpExpiry;
+        req.session.tempUser = tempUser;
+  
+        // Send new OTP
+        await sendOtp(userEmail, newOtp);
+  
+        return res.status(200).json({
+          success: false,
+          message: 'OTP expired. New OTP sent to your email',
+          otpResent: true
+        });
+      }
+  
+      // Verify OTP if not expired
+      if (tempUser.otp != otpInput) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid OTP'
+        });
+      }
+  
+      // Create temporary user for role selection
+      const pendingUser = {
+        pendingRegistration: true,
+        name: tempUser.name,
+        email: tempUser.email,
+        password: tempUser.password, // Keep password for final registration
+        authProvider: 'local',
+        isVerified: true
+      };
+  
+      // Clear verify email from session
+      // Login with temporary user
+      req.login(pendingUser, (err) => {
+        if (err) {
+          return res.status(500).json({
+            success: false,
+            message: 'Login failed'
+          });
+        }
+        return res.redirect('/users/select-role');
       });
-  }
+  
+    } catch (error) {
+      console.error('OTP verification error:', error);
+      return res.status(500).json({
+        success: false,
+        error: error.message
+      });
+    }
+};
+  exports.createUserWithRole = async (userData, role, transaction) => {
+    try {
+      // Create user
+      const user = await db.User.create({
+        name: userData.name,
+        email: userData.email,
+        password: userData.password,
+        role: role,
+        authProvider: 'local',
+        isVerified: true
+      }, { transaction });
+
+      await createRoleProfile(user.id,role,transaction);
+      return user;
+    } catch (error) {
+      throw error;
+    }
+};
+const createRoleProfile = async (userId, role, transaction) => {
+    try {
+      switch(role) {
+        case 'jobseeker':
+          await db.JobSeekerProfile.create({
+            userId: userId
+          }, { transaction });
+          break;
+  
+        case 'employee':
+          await db.EmployerProfile.create({
+            userId: userId,
+          }, { transaction });
+          break;
+  
+        default:
+          throw new Error('Invalid role');
+      }
+    } catch (error) {
+      throw error;
+    }
 };

@@ -89,47 +89,30 @@ exports.callbackLinkedin= async (req, res) => {
     
   }
 
-   let loginUser;
 
    if (!user) {
-       // Create new user
-       loginUser = await db.User.create({
-           name: profile.name,
-           email: profile.email,
-           authProvider: 'linkedin',
-           role: 'jobseeker',
-           password: null,
-           isVerified: true
-       },{transaction});
+    // For new users, create temporary user object and redirect to role selection
+    const tempUser = {
+      pendingRegistration: true,
+      name: profile.name,
+      email: profile.email,
+      authProvider: 'linkedin'
+    };
 
-       if (loginUser.role === 'jobseeker') {
-        await db.JobSeekerProfile.create({
-          userId: loginUser.id,  // Reference the user created above
-          // skills: userData.skills || null,
-          // education: userData.education || null,
-          // experience: userData.experience || null,
-          // certifications: userData.certifications || null,
-          // resumeUrl: resumeUrl,  // Will be added later for resume upload
-        }, { transaction });
-      }
-
-   } else {
-       loginUser = user;
-   }
-   console.log("loginuser",loginUser)
-   // Use req.login instead of manually setting sessio
-   await transaction.commit();
-
-    req.login(loginUser, (err) => {
-        if (err) {
-            next(err);
-        } 
-        res.redirect('/');
+    // Store in session
+    req.login(tempUser, (err) => {
+      if (err) throw err;
+      res.redirect('/users/select-role');
     });
-}
-  catch (error) {
-    if (transaction) await transaction.rollback();
-    console.error('Error during OAuth flow:', error.response?.data || error.message);
-    res.status(500).send('Authentication failed');
+  } else {
+    // Existing user - login and redirect to dashboard
+    req.login(user, (err) => {
+      if (err) throw err;
+      res.redirect('/');
+    });
   }
+} catch (error) {
+  console.error('Error during OAuth flow:', error.response?.data || error.message);
+  res.status(500).send('Authentication failed');
+}
 };

@@ -4,9 +4,12 @@ const auth=require('../middleware/auth')
 const router = express.Router();
 
 // Route for user registration and OTP sending
-router.post('/login', auth.isAuthenticated,loginController.login);
+
+router.get('/logout',loginController.logout);
+
+router.use(auth.checkRegistrationFlow)
+router.post('/login',loginController.login);
 
 // Route for OTP verification
-router.get('/logout',loginController.logout);
     
 module.exports = router;

@@ -4,7 +4,8 @@ const auth=require('../middleware/auth')
 const linkedincontroller=require('../controllers/linkedincontroller')
 
 
-router.get('/linkedin',auth.isAuthenticated,linkedincontroller.authLinkedin)
+router.use(auth.checkRegistrationFlow)
+router.get('/linkedin',linkedincontroller.authLinkedin)
 
 router.get('/linkedin/callback',linkedincontroller.callbackLinkedin)
 

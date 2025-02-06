@@ -30,8 +30,8 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: 'local',
       },
       role: {
-        type: DataTypes.ENUM('jobseeker','employer','admin','hrteam'),
-        allowNull: false,
+        type: DataTypes.ENUM('jobseeker','employee','admin','hr'),
+        allowNull: true,
       },
       otp: {
         type: DataTypes.INTEGER,

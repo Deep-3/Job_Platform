@@ -6,16 +6,24 @@ const useRoutes=require('./routes/userroutes');
 const loginRoutes=require('./routes/loginroutes')
 const googleroutes=require('./routes/googleauthroutes')
 const linkedinroutes=require('./routes/linkedinroutes')
+const employerroutes=require('./routes/employerroutes')
+const jobseekerroutes=require('./routes/jobroutes')
 const session = require('express-session');
 const flash = require('connect-flash');
 
-const axios=require('axios');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
 const sequelize=require('./config/db')
 
 const passport=require('./passport/paaport')
 const cors = require('cors');
 
+const fileUpload = require('express-fileupload');
+
+app.use(fileUpload({
+  createParentPath: true,
+  limits: { 
+      fileSize: 5 * 1024 * 1024 // 5MB max file size
+  },}));
 
 
 // Basic CORS setup
@@ -78,6 +86,8 @@ app.use('/users',useRoutes);
 app.use('/auth',loginRoutes);
 app.use('/gauth',googleroutes)
 app.use('/lauth',linkedinroutes)
+app.use('/employer', employerroutes)
+app.use('/jobseeker',jobseekerroutes)
 const PORT = process.env.PORT || 3000;
 
 
@@ -107,6 +117,24 @@ app.get('/', (req, res) => {
       res.send('Hello, guest!');
     }
   });
+  app.get('/employee',(req,res)=>{
+    if(req.user)
+    {
+      res.send(`hello ,${req.user.name} add company`)
+    }
+    else {
+      res.send('Hello, Employee!');
+    }
+  })
+  app.get('/jobseeker',(req,res)=>{
+    if(req.user)
+    {
+      res.send(`hello ,${req.user.name} please search the company`);
+    }
+    else {
+      res.send('Hello, jobseeker!');
+    }
+  })
 
   app.get('/login',(req,res)=>{
     // console.log(success)
