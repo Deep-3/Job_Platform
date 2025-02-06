@@ -1,89 +1,141 @@
 const db = require('../models');
 const { User, JobSeekerProfile, Job, JobApplication,Company } = db;
 const {s3,PutObjectCommand,getSignedUrl,GetObjectCommand,DeleteObjectCommand}=require('../utils/presign')
+const { sendMail }=require('../utils/sendmail')
+const {jobAplicationMail}=require('../utils/pdfgenerate')
 exports.applyForJob = async (userId, jobId) => {
-    try {
+  try {
       // Get JobSeekerProfile data
-      // First get JobSeekerProfile data
-    const jobSeekerProfile = await JobSeekerProfile.findOne({
-        where: { userId }
-      });
-  
-      // Check if profile is complete
-      if (!jobSeekerProfile.skills || !jobSeekerProfile.education || 
-          !jobSeekerProfile.experience || !jobSeekerProfile.resumeUrl) {
-        return {
-          success: false,
-          error: 'Please complete your profile before applying',
-          requiresProfileCompletion: true,
-          missingFields: {
-            skills: !jobSeekerProfile.skills,
-            education: !jobSeekerProfile.education,
-            experience: !jobSeekerProfile.experience,
-            resumeUrl: !jobSeekerProfile.resumeUrl
+      const jobSeekerProfile = await JobSeekerProfile.findOne({
+          where: { userId },
+          include:{
+            model:User,
+            as:'user',
+            attributes:['email']
           }
-        };
+
+      });
+
+      if (!jobSeekerProfile) {
+          return {
+              success: false,
+              error: 'Job seeker profile not found'
+          };
       }
-  
-      // Check if job exists and is active
-      const job = await Job.findOne({
-        where: { 
-          id: jobId,
-          status: 'active'
-        }
-      });
-  
-      if (!job) {
-        return { error: 'Job not found or not accepting applications' };
-      }
-  
-      // Check for existing application
-      const existingApplication = await JobApplication.findOne({
-        where: {
-          jobId,
-          jobSeekerId:jobSeekerProfile.id
-        }
-      });
-  
-      if (existingApplication) {
-        return { error: 'You have already applied for this job' };
-      }
-  
-      // Create application using JobSeekerProfile data
-      const application = await JobApplication.create({
-        jobId,
-        jobSeekerId:jobSeekerProfile.id,
-        resumeUrl: jobSeekerProfile.resumeUrl,  // Use profile data
-        skills: jobSeekerProfile.skills,        // Use profile data
-        education: jobSeekerProfile.education,   // Use profile data
-        experience: jobSeekerProfile.experience, // Use profile data
-        status: 'pending'
-      });
-  
-      // Get complete application details
-      const completeApplication = await JobApplication.findOne({
-        where: { id: application.id },
-        include: [{
-          model: Job,
-          as: 'job',
-          include: [{
-            model: Company,
-            as: 'company',
-            attributes: ['id', 'companyName']
-          }]
-        }]
-      });
-  
-      return {
-        success: true,
-        message: 'Application submitted successfully',
-        data: {
-          application: completeApplication
-        }
+
+      // Check for missing profile fields
+      const missingFields = {
+          skills: !jobSeekerProfile.skills,
+          education: !jobSeekerProfile.education,
+          experience: !jobSeekerProfile.experience,
+          resumeUrl: !jobSeekerProfile.resumeUrl
       };
-  
+
+      if (Object.values(missingFields).some(field => field)) {
+          return {
+              success: false,
+              error: 'Please complete your profile before applying',
+              requiresProfileCompletion: true,
+              missingFields
+          };
+      }
+
+      // Check job status
+      const job = await Job.findOne({
+          where: { 
+              id: jobId,
+              status: 'active'
+          }
+      });
+
+      if (!job) {
+          return {
+              success: false,
+              error: 'Job not found or not accepting applications'
+          };
+      }
+
+      // Check for duplicate application
+      const existingApplication = await JobApplication.findOne({
+          where: {
+              jobId,
+              jobSeekerId: jobSeekerProfile.id
+          }
+      });
+
+      if (existingApplication) {
+          return {
+              success: false,
+              error: 'You have already applied for this job'
+          };
+      }
+
+      // Create application
+      const application = await JobApplication.create({
+          jobId,
+          jobSeekerId: jobSeekerProfile.id,
+          resumeUrl: jobSeekerProfile.resumeUrl,
+          skills: jobSeekerProfile.skills,
+          education: jobSeekerProfile.education,
+          experience: jobSeekerProfile.experience,
+          status: 'pending'
+      });
+
+      // Get complete application with associations
+      const applicationDetails = await JobApplication.findOne({
+          where: { id: application.id },
+          include: [{
+              model: Job,
+              as: 'job',
+              include: [{
+                  model: Company,
+                  as: 'company',
+                  attributes: ['id', 'companyName']
+              }]
+          }]
+      });
+
+      // Transform for template
+      const completeApplication = {
+          id: applicationDetails.id,
+          status: applicationDetails.status,
+          createdAt: new Date(applicationDetails.createdAt).toLocaleDateString(),
+          updatedAt: new Date(applicationDetails.updatedAt).toLocaleDateString(),
+          job: {
+              id: applicationDetails.job.id,
+              title: applicationDetails.job.title,
+              description: applicationDetails.job.description,
+              location: applicationDetails.job.location,
+              salary: applicationDetails.job.salary,
+              company: {
+                  id: applicationDetails.job.company.id,
+                  companyName: applicationDetails.job.company.companyName
+              }
+          }
+      };
+
+      // Send email notification
+      const html = await jobAplicationMail(completeApplication, 'jobapplication.hbs');
+      const emailResult=await sendMail(jobSeekerProfile.user.email,html)
+      if (!emailResult.success) {
+        console.error('Email sending failed:', emailResult.error);
+    }
+
+    return {
+        success: true,
+        message: emailResult.success 
+            ? 'Application submitted and confirmation email sent'
+            : 'Application submitted but email notification failed',
+        data: completeApplication
+    };
+
+
   } catch (error) {
-    return { error: error.message };
+      console.error('Job application error:', error);
+      return {
+          success: false,
+          error: 'Failed to submit application. Please try again.'
+      };
   }
 };
 
