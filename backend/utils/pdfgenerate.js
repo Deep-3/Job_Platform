@@ -4,7 +4,9 @@ const fs = require('fs');
 const path = require('path');
 const json2csv = require('json2csv').parse;
 
-
+hbs.registerHelper('eq', function(a, b) {
+    return a === b;
+});
 
 exports.CSV = (res, data, filename) => {
   const csv = json2csv(data);

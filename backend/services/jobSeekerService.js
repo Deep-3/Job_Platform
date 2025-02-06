@@ -78,7 +78,6 @@ exports.applyForJob = async (userId, jobId) => {
           skills: jobSeekerProfile.skills,
           education: jobSeekerProfile.education,
           experience: jobSeekerProfile.experience,
-          status: 'pending'
       });
 
       // Get complete application with associations
@@ -106,7 +105,7 @@ exports.applyForJob = async (userId, jobId) => {
               title: applicationDetails.job.title,
               description: applicationDetails.job.description,
               location: applicationDetails.job.location,
-              salary: applicationDetails.job.salary,
+              salary:`₹${applicationDetails.job.salary.min.toLocaleString()} - ₹${applicationDetails.job.salary.max.toLocaleString()}`, // Format salary range,
               company: {
                   id: applicationDetails.job.company.id,
                   companyName: applicationDetails.job.company.companyName
